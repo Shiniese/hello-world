@@ -3,12 +3,13 @@
   <a href="/tags/"><b>&#8592; Browse all tags</b></a>
   <div class="list">
       <h1 class="list-title">{{ .Title }}</h1>
-      {{ range .RegularPages.GroupBy "Section" }}
+      {{ range .Paginator.Pages.GroupBy "Section" }}
         <h2>{{ .Key |humanize }}</h2>
         {{ range .Pages }}
           {{ partial "list-item.html" . }}
         {{ end }}
         <hr>
       {{ end }}
+      {{ partial "pagination.html" . }}
   </div>
 {{ end }}

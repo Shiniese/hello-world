@@ -1,8 +1,9 @@
 {{ define "main" }}
   <div class="list">
     <h2 class="list-title">{{ .Title }}</h2>
-    {{ range .Pages }}
+    {{ range .Paginator.Pages }}
     {{ partial "list-item.html" . }}
     {{ end }}
+    {{ partial "pagination.html" . }}
   </div>
 {{ end }}

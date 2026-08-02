@@ -2128,3 +2128,51 @@ blockquote p {
     margin-right: 2rem;
   }
 }
+
+.page-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  list-style: none;
+  padding-left: 0;
+  margin: 2rem 0;
+}
+.page-links li {
+  list-style: none;
+}
+.page-links a {
+  padding: .25rem .75rem;
+  border: 1px solid #d4d4d8;
+  border-radius: .375rem;
+  color: #1e40af;
+}
+.page-links a:hover {
+  background: #f4f4f5;
+  border-color: #a1a1aa;
+}
+.page-links-active a {
+  background: #1e40af;
+  color: #fff;
+  border-color: #1e40af;
+}
+.page-links-disabled a {
+  color: #a1a1aa;
+  pointer-events: none;
+  border-color: #e4e4e7;
+}
+.dark .page-links a {
+  color: #93c5fd;
+  border-color: #52525b;
+}
+.dark .page-links a:hover {
+  background: #3f3f46;
+}
+.dark .page-links-active a {
+  background: #1e40af;
+  color: #fff;
+}
+.dark .page-links-disabled a {
+  color: #71717a;
+  border-color: #3f3f46;
+}
