@@ -25,8 +25,8 @@ tag = "tags"
 
 # Configure permalinks style
 [permalinks]
-post = "/post/:year/:month/:slug/"
-page = "/page/:slug/"
+post = "/post/:slug/"
+page = "/:slug/"
 
 # Configure main navbar links. They can have a weight to select the order.
 # This links to content within the content/post/ folder
