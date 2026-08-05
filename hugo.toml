@@ -10,6 +10,8 @@ theme = "hugo-astatine-theme"
 preserveTaxonomyNames = true
 rssLimit = 10
 
+disableHugoGeneratorInject = true
+
 [pagination]
 pagerSize = 10
 
@@ -59,6 +61,9 @@ weight = -130
 description = """曾锦文的个人主页。曾锦文，南昌航空大学环境与化学工程学院硕士研究生，研究方向为废水重金属污染治理与环境功能材料。"""
 # Author of the site
 authorName = "曾锦文"
+# Enable link to feed in footer
+blogrss = true
+
 # Main image for the author. This will be the default image for SEO.
 [params.imgname]
 name = "img/main.jpg"
@@ -75,8 +80,6 @@ alt = "曾锦文"
 # name = "@jkharkness"
 # host = "mastodon.social"
 
-# Enable link to feed in footer
-blogrss = true
 
 # Enable pingback and webmention via webmention.io
 # webmention = "hugocisneros.com"
