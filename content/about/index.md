@@ -106,11 +106,11 @@ hideLastMod = true
 
 [^5]: [新型无水厕所（项目详情）](http://jxdc.jxedu.gov.cn/cxcypt/cxcypt/Index/ItemDetail?id=e6060a0f-3b26-40b2-912d-311a98777e48&_id=e8061c13-2d11-4c39-88a7-32e2fb0afa48&_PageIndex=22). 江西省大学生创新训练计划平台, 2022-06-30.
 
-[^6]: [关于公布2019—2020学年优秀学生奖学金获评人员名单的通知](https://hkzzgc.nchu.edu.cn/upload/hkzzgc/pdf/2023/04/26/%E5%85%B3%E4%BA%8E%E5%85%AC%E5%B8%832019%E2%80%942020%E5%AD%A6%E5%B9%B4%E4%BC%98%E7%A7%80%E5%AD%A6%E7%94%9F%E5%A5%96%E5%AD%A6%E9%87%91%E8%8E%B7%E5%BE%97%E4%BA%BA%E5%91%98%E5%90%8D%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5.pdf). 南昌航空大学官方网站, 2023-04-26.
+[^6]: [关于公布2019—2020学年优秀学生奖学金获评人员名单的通知](https://hkzzgc.nchu.edu.cn/upload/hkzzgc/pdf/2023/04/26/%E5%85%B3%E4%BA%8E%E5%85%AC%E5%B8%832019%E2%80%942020%E5%AD%A6%E5%B9%B4%E4%BC%98%E7%A7%80%E5%AD%A6%E7%94%9F%E5%A5%96%E5%AD%A6%E9%87%91%E8%8E%B7%E5%A5%96%E4%BA%BA%E5%91%98%E5%90%8D%E5%8D%95%E7%9A%84%E9%80%9A%E7%9F%A5.pdf). 南昌航空大学官方网站, 2023-04-26.
 
 [^7]: [2023年环境与化学工程学院推荐优秀应届本科毕业生免试攻读硕士学位研究生拟推荐名单公示](https://huanhua.nchu.edu.cn/xygg/content_128614). 南昌航空大学环境与化学工程学院官方网站, 2022-09-16.
 
-[^8]: [关于公布2020—2021学年优秀学生奖学金评定结果的通知](https://hkzzgc.nchu.edu.cn/upload/hkzzgc/pdf/2023/04/26/%E5%85%B3%E4%BA%8E%E5%85%AC%E5%B8%832020%E2%80%942021%20%E5%AD%A6%E5%B9%B4%E4%BC%98%E7%A7%80%E5%AD%A6%E7%94%9F%E5%A5%96%E5%AD%A6%E9%87%91%E8%AF%84%E5%AE%9A%E7%BB%93%E6%9E%9C%E7%9A%84%E9%80%9A%E7%9F%A5.pdf). 南昌航空大学官方网站, 2023-04-26.
+[^8]: [关于公布2020—2021学年优秀学生奖学金评定结果的通知](https://hkzzgc.nchu.edu.cn/upload/hkzzgc/pdf/2023/04/26/%E5%85%B3%E4%BA%8E%E5%85%AC%E5%B8%832020%E2%80%942021%E5%AD%A6%E5%B9%B4%E4%BC%98%E7%A7%80%E5%AD%A6%E7%94%9F%E5%A5%96%E5%AD%A6%E9%87%91%E8%AF%84%E5%AE%9A%E7%BB%93%E6%9E%9C%E7%9A%84%E9%80%9A%E7%9F%A5.pdf). 南昌航空大学官方网站, 2023-04-26.
 
 [^9]: [李剑（师资力量介绍）](https://huanhua.nchu.edu.cn/szll/jsxx/content_58126). 南昌航空大学环境与化学工程学院官方网站, 2018-07-22.
 

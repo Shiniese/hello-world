@@ -44,25 +44,35 @@
 {{ end }}
 <meta property="og:image:alt" content="{{ if .Title }}{{ .Title }}{{ else }}{{ .Site.Title }}{{ end }}">
 <meta property="og:url" content="{{ .Permalink }}">
+
+{{- /* 优先级1：手动填写的Description永远最高 */ -}}
 {{- if .Description -}}
 <meta property="og:description" content="{{ .Description }}">
-<meta name="Description" property="description" content="{{ .Description }}">
-{{- else if and (eq .Type "notes") (ne .Kind "section") }}
-{{ $description := printf "%s %s" "Notes about " (strings.TrimPrefix "Notes on: " .Title) }}
-<meta property="og:description" content="{{ $description }}">
-<meta name="Description" property="description" content="{{ $description }}">
+<meta name="description" content="{{ .Description }}">
+{{- /* 优先级2：所有单篇文章（不管什么Type）都用Summary */ -}}
+{{- else if .IsPage }}
+{{- /* 清理Summary：去HTML、去换行空格 */ -}}
+{{- $cleanSummary := plainify .Summary | replaceRE `[\n\r\t]+` " " | replaceRE `\s{2,}` " " }}
+{{- /* 如果Summary为空，再回退到之前的"Notes about xxx"格式 */ -}}
+{{- $fallbackDesc := printf "Notes about %s" (strings.TrimPrefix "Notes on: " .Title) }}
+<meta property="og:description" content="{{ $cleanSummary | default $fallbackDesc }}">
+<meta name="description" content="{{ $cleanSummary | default $fallbackDesc }}">
+{{- /* 标签详情页：某个标签下的文章列表 */ -}}
 {{- else if and (eq .Type "tags") (ne .Kind "taxonomy") }}
-{{ $description := printf "%s %s" "All articles tagged with " .Title }}
+{{- $description := printf "All articles tagged with %s" .Title }}
 <meta property="og:description" content="{{ $description }}">
-<meta name="Description" property="description" content="{{ $description }}">
+<meta name="description" content="{{ $description }}">
+{{- /* 标签总览页：所有标签云 */ -}}
 {{- else if and (eq .Type "tags") (eq .Kind "taxonomy") }}
-{{ $description := printf "%s" "A list of all the tags in the site. They are arranged in a word cloud" }}
+{{- $description := "A list of all the tags in the site. They are arranged in a word cloud" }}
 <meta property="og:description" content="{{ $description }}">
-<meta name="Description" property="description" content="{{ $description }}">
+<meta name="description" content="{{ $description }}">
+{{- /* 其他页面（首页、列表页等） fallback 到站点默认描述 */ -}}
 {{- else -}}
 <meta property="og:description" content="{{ .Site.Params.description }}">
-<meta name="Description" property="description" content="{{ .Site.Params.description }}">
+<meta name="description" content="{{ .Site.Params.description }}">
 {{- end -}}
+
 {{- /* Twitter Card meta tags */ -}}
 {{ if .Site.Params.Twitter.Name }}
 <link rel="me" href="https://twitter.com/{{ .Site.Params.Twitter.Name }}">
