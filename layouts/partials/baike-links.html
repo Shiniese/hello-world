@@ -1,0 +1,67 @@
+{{/*  这是一段Hugo框架下的Go模板代码，核心功能是为网页内容里的百科术语自动加可跳转的内链，完整逻辑总结如下：
+### 1. 先保护不需要修改的内容块
+先通过正则匹配把页面里的`<pre>`/`<a>`/`<img>`/`<h1-h6>`/`<code>`/`<script>`/`<style>`这类特殊标签内容全部提取出来，用特殊占位符替换原文中的对应部分，避免后续处理破坏这些标签的原有结构。
+### 2. 预处理百科术语库
+读取站点数据里的百科术语列表，优先取术语的`name`字段作为匹配词，没有配置`url`的术语默认用百度百科对应词条作为跳转地址；同时把术语按名称长度从长到短排序，避免短术语先匹配、挤占长术语的匹配位置。
+### 3. 术语匹配加内链
+对每个术语做严格匹配：
+- 大小写不敏感匹配，英文/数字术语额外判断边界：前后不能是其他字母数字，避免误匹配单词的一部分
+- 每个术语只在内容里匹配第一个符合条件的位置，把匹配到的术语替换成指向对应百科页的新`<a>`标签，同样先存为特殊占位符避免干扰后续匹配
+### 4. 还原内容
+最后把所有占位符替换回对应的原始内容和新生成的百科内链，输出处理后的安全HTML内容。  */}}
+
+{{- $content := .Content -}}
+{{- $protected := slice -}}
+{{- $terms := site.Data.baike.terms | default slice -}}
+{{- $protectPattern := `<pre[\s\S]*?</pre>|<a\s[^>]*>[\s\S]*?</a>|<img[^>]*?>|<h[1-6][^>]*>[\s\S]*?</h[1-6]>|<code[^>]*>[\s\S]*?</code>|<script[\s\S]*?</script>|<style[\s\S]*?</style>` -}}
+{{- range $i, $m := findRE $protectPattern $content -}}
+    {{- $token := printf "\ue000BK%d\ue000" $i -}}
+    {{- $protected = $protected | append (dict "token" $token "html" $m) -}}
+    {{- $content = replace $content $m $token -}}
+{{- end -}}
+{{- $sortedTerms := slice -}}
+{{- range $terms -}}
+    {{- $name := trim (printf "%s" (or .name .)) " " -}}
+    {{- if $name -}}
+        {{- $sortedTerms = $sortedTerms | append (dict "name" $name "url" .url "len" (len $name)) -}}
+    {{- end -}}
+{{- end -}}
+{{- $sortedTerms = sort $sortedTerms "len" "desc" -}}
+{{- $i := 0 -}}
+{{- range $sortedTerms -}}
+    {{- $href := .url | default (printf "https://baike.baidu.com/item/%s" .name) -}}
+    {{- $token := printf "\ue000BKA%d\ue000" $i -}}
+    {{- $i = add $i 1 -}}
+    {{- $parts := split (lower $content) (lower .name) -}}
+    {{- $total := len $parts -}}
+    {{- if gt $total 1 -}}
+        {{- $rlen := strings.RuneCount .name -}}
+        {{- $totalRunes := strings.RuneCount $content -}}
+        {{- $isAscii := findRE "[A-Za-z0-9]" .name -}}
+        {{- $acc := 0 -}}
+        {{- $done := false -}}
+        {{- range $k := seq 0 (sub $total 2) -}}
+            {{- if not $done -}}
+                {{- $cp := add (add $acc (strings.RuneCount (index $parts $k))) (mul $k $rlen) -}}
+                {{- $np := add $cp $rlen -}}
+                {{- $prev := "" -}}
+                {{- $next := "" -}}
+                {{- if gt $cp 0 -}}{{- $prev = substr $content (sub $cp 1) 1 -}}{{- end -}}
+                {{- if lt $np $totalRunes -}}{{- $next = substr $content $np 1 -}}{{- end -}}
+                {{- $boundaryOk := or (not $isAscii) (and (not (findRE "[A-Za-z0-9]" $prev)) (not (findRE "[A-Za-z0-9]" $next))) -}}
+                {{- if $boundaryOk -}}
+                    {{- $matched := substr $content $cp $rlen -}}
+                    {{- $anchor := printf `<a href="%s" target="_blank" rel="noopener noreferrer" class="baike-link">%s</a>` $href $matched -}}
+                    {{- $content = printf "%s%s%s" (substr $content 0 $cp) $token (substr $content $np) -}}
+                    {{- $protected = $protected | append (dict "token" $token "html" $anchor) -}}
+                    {{- $done = true -}}
+                {{- end -}}
+            {{- end -}}
+            {{- $acc = add $acc (strings.RuneCount (index $parts $k)) -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- range $protected -}}
+    {{- $content = replace $content .token .html -}}
+{{- end -}}
+{{ $content | safeHTML }}
