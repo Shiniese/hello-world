@@ -13,9 +13,15 @@
 {{- $content := .Content -}}
 {{- $protected := slice -}}
 {{- $terms := site.Data.baike.terms | default slice -}}
-{{- $protectPattern := `<pre[\s\S]*?</pre>|<a\s[^>]*>[\s\S]*?</a>|<img[^>]*?>|<h[1-6][^>]*>[\s\S]*?</h[1-6]>|<code[^>]*>[\s\S]*?</code>|<script[\s\S]*?</script>|<style[\s\S]*?</style>` -}}
+{{- /* 先整体保护标题（含 id），内部内联标签不再被单独匹配，避免 replace 全量替换破坏标题 */ -}}
+{{- range $i, $m := findRE `<h[1-6][^>]*>[\s\S]*?</h[1-6]>` $content -}}
+    {{- $token := printf "\ue000BKH%d\ue000" $i -}}
+    {{- $protected = $protected | append (dict "token" $token "html" $m) -}}
+    {{- $content = replace $content $m $token -}}
+{{- end -}}
+{{- $protectPattern := `<pre[\s\S]*?</pre>|<a\s[^>]*>[\s\S]*?</a>|<img[^>]*?>|<code[^>]*>[\s\S]*?</code>|<script[\s\S]*?</script>|<style[\s\S]*?</style>` -}}
 {{- range $i, $m := findRE $protectPattern $content -}}
-    {{- $token := printf "\ue000BK%d\ue000" $i -}}
+    {{- $token := printf "\ue000BKO%d\ue000" $i -}}
     {{- $protected = $protected | append (dict "token" $token "html" $m) -}}
     {{- $content = replace $content $m $token -}}
 {{- end -}}

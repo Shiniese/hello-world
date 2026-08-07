@@ -19,7 +19,7 @@ readingtime = true
 
 ### 思路选择
 
-Hugo 支持 Markdown 渲染钩子（render hooks），可以自定义链接的 HTML 输出。我选择**方案 B：仅外部链接加 `target="_blank"`**，内部链接（相对路径、锚点、脚注引用）保持当前页跳转。
+Hugo 支持 Markdown 渲染钩子（render hooks），可以自定义链接的 HTML 输出。我选择**仅外部链接加 `target="_blank"`**，内部链接（相对路径、锚点、脚注引用）保持当前页跳转。
 
 ### 实现
 
@@ -255,6 +255,85 @@ delimit: {{ delimit (slice (split "X,Y,Z" ",") 1) "," }}
 
 `\ue000` 不是 ASCII 字母数字，不会触发边界拒绝。
 
+## 踩坑：术语链接跑进了标题的 id 属性
+
+加了词边界检查后我以为万事大吉，直到我在渲染结果里看到一个匪夷所思的东西——本文里 "## 踩坑：`go` 匹配进了 `Hugo`" 这个标题，渲染出来变成了：
+
+```html
+<h2 id="踩坑<a href="https://baike.baidu.com/item/go" target="_blank" rel="noopener noreferrer" class="baike-link">go</a>-匹配进了-hugo">
+```
+
+`<a>` 标签被整个塞进了 HTML 属性值里！这个标题的锚点彻底废了，浏览器根本没法解析这个 id。
+
+### 排查：占位符神秘消失
+
+我先用 `strings.Count` 埋点，检查 protect 阶段生成的 h2 占位符是否还在内容里：
+
+```go-html-template
+AFTER-PROTECT-H2TOKEN: {{ strings.Count $content "\ue000BK98\ue000" }}
+```
+
+输出 `AFTER-PROTECT-H2TOKEN: 0`——protect 阶段刚结束，h2 的占位符就已经不在内容里了。
+
+再给每个 match 打印"它的原始串此刻还在不在内容里"：
+
+```go-html-template
+MATCH idx={{ $i }} len={{ len $m }} found={{ strings.Contains $content $m }}
+```
+
+输出：
+
+```
+MATCH idx=96 len=16 found=false head=<code>DFT</code>
+MATCH idx=97 len=16 found=false head=<code>DFT</code>
+MATCH idx=98 len=96 found=false head=<h2 id="踩坑go-匹配进了-hugo">踩坑：<code>go</code> 匹配
+```
+
+真相浮出水面：**h2 被 `findRE` 匹配到了（idx 98），但轮到它替换时，`$content` 里已经没有这个完整字符串了。** 直接 dump protect 后的内容看 h2 区域：
+
+```html
+<h2 id="踩坑go-匹配进了-hugo">踩坑：\ue000BK79\ue000 匹配进了 \ue000BK84\ue000</h2>
+```
+
+h2 的开标签和 id 是**裸的**，只有它内部的 `<code>` 被替换成了占位符（BK79、BK84）。
+
+### 根因：`replace` 是全量替换
+
+我把 `replace $content $m $token` 当成了"只替换 findRE 返回的那一处"。实际上 **Hugo 的 `replace` 函数会替换内容里所有匹配的子串**。于是事情变成了这样：
+
+1. `findRE` 一次性匹配出所有受保护元素：正文里先出现的 `<code>go</code>` 是 idx 79，而 h2 内部的 `<code>go</code>` 是 h2 整体（idx 98）的一部分
+2. 处理 idx 79 时，`replace $content "<code>go</code>" $token` **把全文所有 `<code>go</code>` 都替换了**，包括 h2 内部的
+3. 同理 `<code>Hugo</code>`（idx 84）也把 h2 内部的换掉了
+4. 轮到 h2（idx 98）时，它的 `$m`（含原始 `<code>` 标签的完整字符串）已经不存在 → `replace` 静默空操作，h2 从头到尾没被保护
+5. 术语阶段做边界检查：id 里的 `go` 前面是 `坑`、后面是 `-`，都不是字母数字 → 检查通过 → 链接成功进入 id 属性
+
+### 修复：标题单独一轮先保护
+
+解决思路：让标题**整体**（含 id）在一个独立的 `findRE` 中先被替换，这样它内部的标签永远不会被第二轮匹配到：
+
+```go-html-template
+{{- /* 第一轮：整体保护标题（含 id），内部内联标签不再被单独匹配 */ -}}
+{{- range $i, $m := findRE `<h[1-6][^>]*>[\s\S]*?</h[1-6]>` $content -}}
+    {{- $token := printf "\ue000BKH%d\ue000" $i -}}
+    {{- $protected = $protected | append (dict "token" $token "html" $m) -}}
+    {{- $content = replace $content $m $token -}}
+{{- end -}}
+
+{{- /* 第二轮：保护其余元素 */ -}}
+{{- $protectPattern := `<pre[\s\S]*?</pre>|<a\s[^>]*>[\s\S]*?</a>|<img[^>]*?>|<code[^>]*>[\s\S]*?</code>|<script[\s\S]*?</script>|<style[\s\S]*?</style>` -}}
+{{- range $i, $m := findRE $protectPattern $content -}}
+    {{- $token := printf "\ue000BKO%d\ue000" $i -}}
+    {{- $protected = $protected | append (dict "token" $token "html" $m) -}}
+    {{- $content = replace $content $m $token -}}
+{{- end -}}
+```
+
+两轮占位符用不同前缀（`BKH`/`BKO`），避免编号冲突。
+
+这个 bug 还顺带暴露了一个无害的小问题：**重复字符串的 match**（比如两个一模一样的 `<code>DFT</code>`）也会让第二个 match `found=false`——第一个 `replace` 全量替换时把两个都换掉了。内容不受影响，只是占位符列表里多一条永远用不上的记录。
+
+修复后全站验证：标题 id 内嵌 `<a>` 标签 0 处，残留占位符 0，每页每术语依然只链接一次。
+
 ## 最终验证
 
 构建后逐项检查：
@@ -274,9 +353,12 @@ done
 
 # 检查残留占位符
 rg -l '\ue000' public/post/*/index.html || echo "no leftover tokens"
+
+# 检查标题 id 内是否嵌入了链接（id 值里出现 <a 即为异常）
+rg -o '<h[1-6][^>]*id="[^"]*<a ' public/post/*/index.html || echo "no links inside heading ids"
 ```
 
-全部通过：无重复链接、无残留占位符、内容无截断、代码块完整、标题未被链接。
+全部通过：无重复链接、无残留占位符、内容无截断、代码块完整、标题 id 干净（0 处属性内嵌 `<a>`）。
 
 ## 小结与避坑清单
 
@@ -287,6 +369,7 @@ rg -l '\ue000' public/post/*/index.html || echo "no leftover tokens"
 3. **Hugo `len` vs `strings.RuneCount`**：`len` 返回字节数，中文字符占 3 字节；做字符定位必须用 `RuneCount`
 4. **百度反爬**：TLS 指纹检测，`requests`/`curl` 直接 403；需要 `curl_cffi` 的 `impersonate="chrome"` 模拟浏览器指纹
 5. **词边界**：短英文术语（如 `go`）做子串匹配时必须检查前后字符，否则会匹配进更长的单词
+6. **Hugo `replace` 是全量替换**：`replace $content $m $token` 替换所有匹配子串；配合 `findRE` 循环做"逐个保护"时，重复或嵌套的子串会让后面的 replace 静默失效，且很难直接看出来
 
 ### 避坑清单
 
@@ -296,6 +379,7 @@ rg -l '\ue000' public/post/*/index.html || echo "no leftover tokens"
 | `substr` 第二参数当结束下标 | 取出内容过长/错位 | 第二参数是**长度**，用 `RuneCount` 计算 |
 | `len` 当字符数 | 中文定位偏移 | 用 `strings.RuneCount` |
 | 占位符用纯字母 | 边界检查误判 | 用 `\ue000` 私用区字符包裹 |
+| 单轮 findRE 保护所有标签 | 标题内部标签先被替换，标题整体 `$m` 失效，id 裸奔被术语链接 | 标题单独一轮先整体保护（`BKH` 前缀） |
 | 术语不排序 | 短术语抢走长术语的匹配 | 按长度降序处理 |
 | 用 `requests` 请求百科 | 全部 403 | 用 `curl_cffi` + `impersonate="chrome"` |
 
