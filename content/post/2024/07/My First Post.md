@@ -5,6 +5,7 @@ slug = "my-first-post"
 categories = [ "杂谈", "生活" ]
 tags = [ "博客", "随笔" ]
 readingtime = true
+draft = true
 +++
 
 万事开头难呀...

@@ -111,11 +111,11 @@ publications:
     description: High-valent metal oxidants (HVMOs) have attracted considerable attention in advanced oxidation processes (AOPs) due to their high selectivity for oxidizing organic pollutants. However, the pursuit of green and efficient activators, together with the clarification of external factors affecting HVMO performance, remains a major challenge in practical applications. In this review, we present a comprehensive overview of the chemical properties of HVMOs, with a particular emphasis on their oxidation characteristics, focusing on permanganate (MnO4–), ferrate (FeO4–), dichromate (Cr2O72–). We further analyze energy changes and redox potential variations during the oxidation process. Recent advances in the activation of HVMOs by metal-free carbon materials are summarized, and the potential effects of common coexisting substances in environmental matrices, such as H+, OH–, inorganic anions, metal ions, and natural organic matter (NOM), are critically examined. Moreover, potential risks associated with residual HVMOs after organic pollutant oxidation are discussed, along with relevant separation and purification strategies. This review aims to deepen the understanding of HVMOs in environmental catalysis, explore their potential for resource recovery, and provide perspectives on future research directions and practical applications.
 ---
 
-# 个人简介
+## 个人简介
 
-曾锦文，男，汉族，南昌航空大学环境与化学工程学院硕士研究生。2019年考入南昌航空大学给排水科学与工程专业，2023年免试推荐至环境与化学工程学院环境科学与工程专业攻读硕士学位。
+[曾锦文](https://baike.baidu.com/item/%E6%9B%BE%E9%94%A6%E6%96%87/68455238)，男，汉族，[南昌航空大学](https://baike.baidu.com/item/%E5%8D%97%E6%98%8C%E8%88%AA%E7%A9%BA%E5%A4%A7%E5%AD%A6/3073271)环境与化学工程学院硕士研究生。2019年考入南昌航空大学[给排水科学与工程](https://baike.baidu.com/item/%E7%BB%99%E6%8E%92%E6%B0%B4%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%B7%A5%E7%A8%8B/3623537)专业，2023年免试推荐至环境与化学工程学院[环境科学与工程](https://baike.baidu.com/item/%E7%8E%AF%E5%A2%83%E7%A7%91%E5%AD%A6%E4%B8%8E%E5%B7%A5%E7%A8%8B/9627206)专业攻读硕士学位。
 
-曾获第十四届全国大学生节能减排社会实践与科技竞赛全国三等奖、第七届江西省“互联网+”大学生创新创业大赛铜奖等奖项；作为发明人之一参与“一种新型无水式节能厕所系统”等国家发明专利；以第一作者在《Environmental Functional Materials》发表研究论文。
+曾获第十四届[全国大学生节能减排社会实践与科技竞赛](https://baike.baidu.com/item/%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/3739736)全国三等奖、第七届[江西省“互联网+”大学生创新创业大赛](https://baike.baidu.com/item/%E6%B1%9F%E8%A5%BF%E7%9C%81%22%E4%BA%92%E8%81%94%E7%BD%91%2B%22%E5%A4%A7%E5%AD%A6%E7%94%9F%E5%88%9B%E6%96%B0%E5%88%9B%E4%B8%9A%E5%A4%A7%E8%B5%9B/62971985)铜奖等奖项；作为发明人之一参与“一种新型无水式节能厕所系统”等[国家发明专利](https://baike.baidu.com/item/%E5%9B%BD%E5%AE%B6%E5%8F%91%E6%98%8E%E4%B8%93%E5%88%A9/3596623)；以第一作者在《Environmental Functional Materials》发表研究论文。
 
 研究方向为**废水污染治理与环境功能材料**，主要包括：
 
